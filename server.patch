@@ -1,0 +1,23 @@
+diff --git a/server/server.go b/server/server.go
+index ae41b99..a69cdf2 100644
+--- a/server/server.go
++++ b/server/server.go
+@@ -8,6 +8,8 @@ import (
+ 	"log"
+ 	"net/http"
+ 	"path/filepath"
++
++	"github.com/aarol/reload"
+ )
+ 
+ var (
+@@ -19,6 +21,8 @@ func main() {
+ 	flag.Parse()
+ 	fmt.Printf("Serving %s on localhost%s", dir, port)
+ 
+-	err := http.ListenAndServe(port, http.FileServer(http.Dir(dir)))
++	reloader := reload.New(dir)
++	handler := reloader.Handle(http.FileServer(http.Dir(dir)))
++	err := http.ListenAndServe(port, handler)
+ 	log.Fatalln(err)
+ }
